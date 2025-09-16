@@ -1,7 +1,14 @@
-public with sharing class AccountHelper {
-    public static void updateAccountName(Id accountId, String newName) {
-        Account acc = [SELECT Id, Name FROM Account WHERE Id = :accountId LIMIT 1];
-        acc.Name = newName;
-        update acc;
+@isTest
+private class AccountHelperTest {
+    @isTest static void testUpdateAccountName() {
+        Account acc = new Account(Name = 'Old Name');
+        insert acc;
+
+        Test.startTest();
+        AccountHelper.updateAccountName(acc.Id, 'New Name');
+        Test.stopTest();
+
+        Account updated = [SELECT Name FROM Account WHERE Id = :acc.Id];
+        System.assertEquals('New Name', updated.Name);
     }
 }
